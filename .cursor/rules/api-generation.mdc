@@ -1,0 +1,222 @@
+---
+description: Flutter API Method Addition Rules
+globs: 
+alwaysApply: false
+---
+# Flutter API Method Addition Rules (Compressed)
+
+## 🚨 MANDATORY CURL REQUIREMENT
+**CRITICAL**: Valid CURL command MUST be provided first. If no CURL, REFUSE generation and request CURL.
+
+## CURL Validation Framework
+
+### Step 0: CURL Validation (MANDATORY)
+**Allowed Methods**: GET, POST, PUT, PATCH, DELETE
+**Required**: `curl`, `-X [METHOD]`, valid URL
+**Authorization Detection**: Auto-detect from headers (`Authorization: Bearer`, `X-API-Key`, etc.)
+**Default**: `isAuthorization: true` (unless auth feature)
+
+### Authorization Rules:
+- **Auth Feature**: Always `isAuthorization: false` (no param needed if default)
+- **Other Features**: Default `isAuthorization: true` (omit param)
+- **Detection**: Headers containing `Authorization:`, `X-API-Key:`, `X-Auth-Token:`, `API-Key:`
+
+### API Type Detection:
+- **Paginated GET**: Contains `page`, `limit`, `offset`, `pageSize`, `per_page`
+- **Simple GET**: No pagination params
+- **Filter GET**: Contains `status`, `type`, `category`, `filter`, `search`
+- **Mutations**: POST, PUT, PATCH, DELETE
+
+## Response Model Generation Rules
+
+### ✅ GENERATE Response Models: GET Methods ONLY
+- Paginated GET → Full response model with pagination metadata
+- Simple GET → Basic response model
+- Filter GET → Response model with items array
+
+### ❌ DO NOT Generate Response Models: POST, PUT, PATCH, DELETE
+- Skip response model generation entirely
+- Only create request models for these methods
+
+## Method Generation Patterns
+
+### Pattern 1: Paginated GET (3 methods)
+```
+Detection: page/limit/offset params in CURL
+Methods: fetch + refresh + loadMore
+RefreshController: Optional
+```
+
+### Pattern 2: Simple GET (1 method)
+```
+Detection: No pagination params
+Methods: Simple fetch only
+```
+
+### Pattern 3: Mutations (1 method each)
+```
+Detection: POST/PUT/PATCH/DELETE
+Methods: Single mutation method
+HTTP Method: From CURL
+```
+
+## Code Generation Structure
+
+### Files Created/Modified:
+```
+api_endpoints.dart          ← ADD endpoint
+request_model.dart          ← CREATE (all methods)
+response_model.dart         ← CREATE (GET only)
+repository.dart            ← ADD methods
+state_notifier.dart        ← ADD methods
+state.dart                 ← ADD properties
+```
+
+### Request Model Template:
+```dart
+class MethodNameRequestModel {
+  // Fields from CURL params only
+  // copyWith() only for paginated APIs
+  // toJson(), fromJson() always included
+}
+```
+
+### Response Model Template (GET Only):
+```dart
+class MethodNameResponseModel {
+  final bool success;
+  final MethodNameData? data;
+  final String? message;
+  
+  // Pagination metadata for paginated APIs only
+}
+
+class MethodNameData {
+  final List<MethodNameItems> items; // For list responses
+  final int? totalCount; // Paginated only
+  final int? currentPage; // Paginated only
+}
+```
+
+### Repository Method Template:
+```dart
+// GET Method
+@override
+FutureEither<ReturnType> methodName({
+  required RequestModel requestModel,
+  // isAuthorization param only for auth feature (false)
+}) async {
+  final response = await ApiHelper.instance.get(
+    url: APIEndpoints.endpoint,
+    queryParams: requestModel.toJson(),
+    isAuthorization: isAuth, // Based on feature/detection
+    fromJson: (data) => ResponseModel.fromJson(data ?? {}),
+  );
+  return AppUtils.handleApiResponse<ReturnType>(response, (data) => data.items);
+}
+
+// POST/PUT/PATCH Method
+@override
+FutureEither<DataType> methodName({
+  required RequestModel requestModel,
+}) async {
+  final response = await ApiHelper.instance.httpMethod(
+    url: APIEndpoints.endpoint,
+    params: requestModel.toJson(),
+    isAuthorization: isAuth,
+    // No fromJson for mutations - handle raw response
+  );
+  return AppUtils.handleApiResponse<DataType>(response, (data) => processData(data));
+}
+
+// DELETE Method
+@override
+FutureEither<bool> methodName({
+  required RequestModel requestModel,
+}) async {
+  final response = await ApiHelper.instance.delete(
+    url: APIEndpoints.endpoint,
+    queryParams: requestModel.toJson(),
+    isAuthorization: isAuth,
+  );
+  return AppUtils.handleApiResponse<bool>(response, (data) => true);
+}
+```
+
+## Enhanced Error Handling
+
+### Status Code Mapping:
+```dart
+String _getCustomError(error, context) {
+  int? status = _extractStatusCode(error.toString());
+  switch (status) {
+    case 400: return _getBadRequestError(context);
+    case 401: return _getUnauthorizedError(context);
+    case 403: return _getForbiddenError(context);
+    case 404: return _getNotFoundError(context);
+    case 422: return _getValidationError(context);
+    case 429: return _getRateLimitError(context);
+    case 500: return _getServerError(context);
+    default: return _getContextError(context);
+  }
+}
+```
+
+### Context-Specific Messages:
+```dart
+String _getContextError(String context) {
+  final messages = {
+    'getBooks': 'Unable to load books. Check connection.',
+    'postBooks': 'Failed to create book. Verify info.',
+    'putBooks': 'Failed to update book. Try again.',
+    'deleteBooks': 'Failed to delete book. Try again.',
+    // Add more context-specific messages
+  };
+  return messages[context] ?? AppStrings.somethingWentWrong;
+}
+```
+
+## CURL Examples
+
+### ✅ Valid CURL:
+```bash
+# Paginated GET with Auth
+curl -X GET "https://api.com/books?page=1&limit=10" -H "Authorization: Bearer token"
+
+# Simple GET without Auth  
+curl -X GET "https://api.com/public/version"
+
+# POST with Auth
+curl -X POST "https://api.com/books" -H "Authorization: Bearer token" -d '{"title":"Book"}'
+
+# PUT without Auth
+curl -X PUT "https://api.com/public/settings" -d '{"theme":"dark"}'
+```
+
+### ❌ Invalid CURL (Reject):
+```bash
+curl "https://api.com/books"                    # Missing method
+curl -X CONNECT "https://api.com/books"         # Invalid method  
+curl -X GET                                     # Missing URL
+```
+
+## Implementation Steps
+
+1. **Validate CURL** → Extract method, URL, params, headers
+2. **Detect API Type** → Paginated/Simple/Filter/Mutation
+3. **Generate Endpoint** → Add to api_endpoints.dart
+4. **Create Request Model** → All methods get request model
+5. **Create Response Model** → GET methods only
+6. **Add Repository Method** → HTTP method specific implementation
+7. **Add State Management** → Controller methods and state properties
+8. **Error Handling** → Context-specific error messages
+
+## Key Rules Summary
+
+- **CURL Required**: No CURL = No generation
+- **Response Models**: GET methods only
+- **Auth Feature**: `isAuthorization: false` (omit if default)
+- **Other Features**: Default `isAuthorization: true` (omit param)
+- **Pagination**: Auto-detect from params, generate 3 methods
+- **Mutations**: Single method, no response model
+- **Error Handling**: Context and status code specific messages

@@ -1,0 +1,88 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Flutter Project Structure and Naming Conventions
+
+## Directory Structure
+
+```
+lib/
+├── config/                  # App-level config files (env, sentry, etc.)
+│   ├── assets/
+│   ├── env/
+│   ├── flavours/
+│   │   ├── dev/
+│   │   └── prod/
+│   │       └── app.dart
+│   └── sentry/
+├── constants/               # App-wide constants like KSizes, colors, durations
+├── features/                # Feature-based organization
+│   └── example/                # example feature
+│       ├── controllers/     # example controllers of feature               
+│       │   ├── example_state_notifier.dart  
+│       │   └── example_state.dart
+│       ├── models/
+│       │   └── example_model.dart  # example models of feature
+│       ├── repository/
+│       │   └── example_repository.dart  # example screen repository
+│       ├── views/
+│       │   ├── widgets/
+│       │   └── example_screen.dart  # any screens will be added here
+│  
+├── helpers/                 # Utility functions and extensions
+├── services/                # App-wide services (firebase, cache, polling)
+├── utils/                   # General utility files (e.g., app_utils.dart)
+├── widgets/                 # Common reusable widgets
+│   ├── common/
+│   ├── dialog/
+│   ├── loaders/
+│   └── shimmer/
+└── main.dart                # Entry point
+
+```
+
+## Naming Conventions
+
+### Files and Directories
+
+1. All file and directory names should use **snake_case**.
+2. Feature directories should be descriptive and domain-specific.
+3. Model files should use the suffix `_model.dart`.
+4. Widget files should use the suffix `_widget.dart`.
+5. State management files for Riverpod providers/notifiers use `_state.dart` or `_notifier.dart`.
+6. Screen files should use the suffix `_screen.dart`.
+
+### Classes
+
+1. Use **PascalCase** for class names.
+2. Widget classes should match their file names in PascalCase.
+3. Interface classes (if any) should be prefixed with `I`.
+
+## Code Organization
+
+1. Group related widgets in the same directory (feature-level or global `widgets/`).
+2. Separate concerns into layers inside each feature:
+   - **controllers/** — Riverpod providers and state notifiers
+   - **models/** — Data classes and models
+   - **repository/** — Data access and abstraction
+   - **views/** — UI components and pages
+3. Keep business logic inside controllers/providers, independent from UI.
+4. Use **Riverpod** for all state management.
+
+## Widget Structure
+
+1. Use **StatefulWidget** only for UI-related state (not business logic).
+2. Use **StatelessWidget** for presentational components.
+3. Each widget should be in its own file named with `_widget.dart`.
+4. Keep widget files focused on a single responsibility.
+5. Maintain clear separation between presentation (UI) and business logic (state management).
+
+## Best Practices
+
+1. Keep widget files focused on a single responsibility.
+2. Maintain a clear separation between presentation and business logic.
+3. Follow a consistent pattern for state management using Riverpod.
+4. Business logic should be testable and independent of UI.
+

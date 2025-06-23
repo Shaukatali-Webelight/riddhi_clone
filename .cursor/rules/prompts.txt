@@ -1,0 +1,3 @@
+# Use this prompt for generating api methods using cursor rules
+
+Generate Flutter API method following the established rules. CURL: [PASTE_COMPLETE_CURL_COMMAND_HERE], Request Model: [REQUEST_MODEL], Response Model: [RESPONSE_MODEL], Feature: [FEATURE_NAME], Method: [METHOD_NAME]
