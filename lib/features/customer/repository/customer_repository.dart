@@ -33,7 +33,7 @@ class CustomerRepository implements ICustomerRepository {
       final response = await ApiHelper.instance.get(
         url: APIEndpoints.customer,
         queryParams: requestModel.toJson(),
-        fromJson: (data) => GetAllCustomerDataResponseModel.fromJson(data ?? {}),
+        fromJson: GetAllCustomerDataResponseModel.fromJson,
       );
 
       return AppUtils.handleApiResponse<GetAllCustomerDataData>(

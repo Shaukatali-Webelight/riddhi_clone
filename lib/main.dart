@@ -10,6 +10,7 @@ import 'package:riddhi_clone/config/assets/colors.gen.dart';
 import 'package:riddhi_clone/constants/theme.dart';
 import 'package:riddhi_clone/features/splash/views/splash_screen.dart';
 import 'package:riddhi_clone/features/theme/presentation/theme_notifier.dart';
+import 'package:riddhi_clone/github_issue.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 final signedCookies = ValueNotifier<Map<String, String>>({});
@@ -54,7 +55,7 @@ class AppWidget extends StatelessWidget {
                 ),
                 scrollBehavior: const ScrollBehavior().copyWith(overscroll: false),
                 theme: themeState ? AppTheme.darkTheme : AppTheme.lightTheme,
-                home: const SplashScreen(),
+                home: GithubIssueScreen(),
                 navigatorObservers: [
                   SentryNavigatorObserver(),
                 ],

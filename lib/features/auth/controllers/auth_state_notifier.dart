@@ -21,7 +21,6 @@ import 'package:riddhi_clone/features/auth/views/verify_otp_screen.dart';
 import 'package:riddhi_clone/features/bottom_nav/bottom_nav_screen.dart';
 import 'package:riddhi_clone/features/common/controllers/master_data.dart';
 import 'package:riddhi_clone/features/common/repository/master_api_repo.dart';
-import 'package:riddhi_clone/features/ziya/views/ziya_main_screen.dart';
 import 'package:riddhi_clone/helpers/app_navigation.dart';
 import 'package:riddhi_clone/main.dart';
 import 'package:riddhi_clone/resources/toast_helper.dart';
