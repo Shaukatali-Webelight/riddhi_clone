@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:riddhi_clone/features/checklist/views/check_list_screen.dart';
 import 'package:riddhi_clone/features/customer/models/get_all_customer_data_response_model.dart';
-import 'package:riddhi_clone/features/safarr/views/safarr_filter_screen.dart';
 
 class CustomerDetailsScreen extends StatefulWidget {
   const CustomerDetailsScreen({
@@ -450,8 +450,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                 child: GestureDetector(
                   onTap: () => Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const SafarrFilterScreen(),
+                    MaterialPageRoute<void>(
+                      builder: (context) => const CheckListScreen(),
                     ),
                   ),
                   child: _buildStatCard(

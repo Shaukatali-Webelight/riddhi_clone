@@ -104,7 +104,7 @@ class AuthRepository implements IAuthRepository {
         url: APIEndpoints.sendOtp,
         params: requestModel.toJson(),
         isAuthorization: false,
-        fromJson: (data) => data,
+        fromJson: (data) => data ?? {},
       );
 
       if (response.hasError) {
@@ -167,7 +167,7 @@ class AuthRepository implements IAuthRepository {
         url: APIEndpoints.verifyOtp,
         params: requestModel.toJson(),
         isAuthorization: false,
-        fromJson: (data) => data,
+        fromJson: (data) => data ?? {},
       );
 
       if (response.hasError) {
@@ -196,7 +196,7 @@ class AuthRepository implements IAuthRepository {
         url: APIEndpoints.createNewPassword,
         params: requestModel.toJson(),
         isAuthorization: false,
-        fromJson: (data) => data,
+        fromJson: (data) => data ?? {},
       );
 
       if (response.hasError) {
