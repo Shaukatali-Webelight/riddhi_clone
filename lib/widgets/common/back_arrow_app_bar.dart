@@ -3,7 +3,6 @@ import 'package:riddhi_clone/config/assets/assets.gen.dart';
 import 'package:riddhi_clone/config/assets/colors.gen.dart';
 import 'package:riddhi_clone/constants/app_dimensions.dart';
 import 'package:riddhi_clone/constants/app_semantic_labels.dart';
-import 'package:riddhi_clone/constants/app_strings.dart';
 import 'package:riddhi_clone/constants/app_styles.dart';
 import 'package:riddhi_clone/helpers/app_navigation.dart';
 import 'package:riddhi_clone/widgets/common/app_divider.dart';

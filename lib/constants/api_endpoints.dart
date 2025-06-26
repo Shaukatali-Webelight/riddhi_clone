@@ -165,4 +165,7 @@ class APIEndpoints {
 
   //* Afternoon
   static String get getAfternoon => _sdoAppointment;
+
+  //* CHECKLIST
+  static String get getCheckList => '${_user}self';
 }

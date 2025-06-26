@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:io';
 
 void main() {
@@ -19,7 +17,8 @@ void main() {
 
   if (Directory(basePath).existsSync()) {
     print(
-        'Error: The folder "$basePath" already exists. Please choose a different feature name.');
+      'Error: The folder "$basePath" already exists. Please choose a different feature name.',
+    );
     return;
   }
 
@@ -108,11 +107,15 @@ class _${className}ScreenState extends ConsumerState<${className}Screen> {
   }
 
   // Create files
-  _createFile('$basePath/controllers/${featureName}_state_notifier.dart',
-      stateNotifierContent);
+  _createFile(
+    '$basePath/controllers/${featureName}_state_notifier.dart',
+    stateNotifierContent,
+  );
   _createFile('$basePath/controllers/${featureName}_state.dart', stateContent);
   _createFile(
-      '$basePath/repository/${featureName}_repository.dart', repositoryContent);
+    '$basePath/repository/${featureName}_repository.dart',
+    repositoryContent,
+  );
   _createFile('$basePath/views/${featureName}_screen.dart', screenContent);
 
   print("Feature '$featureName' created successfully.");
@@ -124,17 +127,10 @@ void _createFile(String path, String content) {
 }
 
 String _toPascalCase(String input) {
-  return input
-      .split('_')
-      .map((word) => word[0].toUpperCase() + word.substring(1))
-      .join();
+  return input.split('_').map((word) => word[0].toUpperCase() + word.substring(1)).join();
 }
 
 String _toCamelCase(String input) {
   final parts = input.split('_');
-  return parts[0] +
-      parts
-          .skip(1)
-          .map((word) => word[0].toUpperCase() + word.substring(1))
-          .join();
+  return parts[0] + parts.skip(1).map((word) => word[0].toUpperCase() + word.substring(1)).join();
 }
